@@ -1,10 +1,14 @@
 const express = require("express");
+const usersRouter = require("./routes/users.router.js");
+const subesRouter = require("./routes/subes.router.js")
 
 const app = express();
 
-app.listen(8080, () => {
+app.use(express.json());
+app.use(express.urlencoded());
 
-    console.log("Server Up!");
+app.use("/", usersRouter);
+app.use("/", subesRouter);
 
-});
+app.listen(8080, () => { console.log("Server Up!") });
 
