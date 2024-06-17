@@ -1,7 +1,7 @@
 const express = require("express");
+const db = require("../db/firebase.js")
 
 const subesRouter = express.Router();
-const db = 
 
 subesRouter.get("/subes", (req, res) => {
 
