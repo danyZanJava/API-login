@@ -4,7 +4,7 @@ const app = express();
 
 app.listen(8080, () => {
 
-    console.log("Server sUp!")
+    console.log("Server Up!");
 
 });
 
