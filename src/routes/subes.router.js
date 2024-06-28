@@ -26,5 +26,4 @@ subesRouter.delete("/subes", (req, res) => {
     res.send("Se elimino una sube");
 
 });
-
 module.exports = subesRouter;

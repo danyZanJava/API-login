@@ -1,7 +1,7 @@
 {
   "name": "sube",
   "version": "1.0.0",
-  "description": "",
+  "description": "SUBEapp with authentications and authorizations",
   "main": "main.js",
   "scripts": {
     "start": "node src/main.js",

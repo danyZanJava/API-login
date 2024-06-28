@@ -1,7 +1,8 @@
 const express = require("express");
+const db = require("../db/firebase.js")
 
 const usersRouter = express.Router();
-const db = require("../db/firebase.js")
+
 
 usersRouter.get("/users", (req, res) => {
 
