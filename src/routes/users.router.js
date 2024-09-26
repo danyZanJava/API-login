@@ -100,13 +100,15 @@
 // module.exports = usersRouter;
 const express = require("express");
 const usersRouter = express.Router();
+const bcryptjs = require("bcryptjs");
  //La línea `const bcryptjs = require("bcryptjs");` importa la biblioteca bcryptjs en el código JavaScript.
 //Esta biblioteca se usa comúnmente para hacer hashes de contraseñas y comparar contraseñas con hashes para fines de autenticación.
 // Al requerir la biblioteca bcryptjs, el código obtiene acceso a funciones como
 //`hashSync` y `compareSync` que se usan para hacer hashes de contraseñas y compararlas respectivamente.
-const bcryptjs = require("bcryptjs");
+ //Sirve para hashear la password. 
+                                      //(Verficar si esta en los package.jon)
 const db = require("../db/firebase.js");
-const handlejwt = require("../utils/jwt.js");
+const handlejwt = require("../utils/jwt.js");//importo el Token de seguridad.
 
 //usersRouter.use(express.json());
 
@@ -128,27 +130,30 @@ usersRouter.get("/", async (req, res) => {
         res.status(500).send(error.message);
     }
 });
-//-----------------  CONSULTAR LA EXISTENCIA DE UN USUARIO (LOGIN) Y VERIFICAR SU CONTRASEÑA  --------------------
-usersRouter.get("/users/login", async (req,res) =>{
+//--------ACCEDER AL SISTEMA(LOGIN)/BUSCAR USUARIO EN DBase  Y VERIFICAR SU CONTRASEÑA  --------------------
+usersRouter.post("/login", async (req,res) =>{
 
-    //obtenemos el email y el password a traves del formulario
-    const email = email.body.email;
-    const password = password.body.password;
+    //obtenemos el email y el password,datos que envias desde el front a traves del
+    // formulario (postman)
+    //ESTO LO ENVIA EL USUARIO DESDE EL FRONT y da acceso con req.body..
+    const email = req.body.email;
+    const password = req.body.password;
 
     // Seleccionamos la coleccion
-    const collection = db.collection("users");
+    const collection = db.collection("Users");
    
      //Buscamos un registro cuyo campo "email" sea igual "==" al email
     //que tomamos(que obtenemos) del formulario y lo obtenemos con (.get())
     const userFinded = await collection.where("email", "==", email).get();
+
+    if (userFinded.docs.length === 0) {res.status(400).send ("Usuario no se pudo logear.x email incorrecto.!!")};
 
     //Tomamos el usuario encontrado
     const userDoc = userFinded.docs[0];
 
     //Tomamos los datos del usuario
     const user = {
-
-        id:userDoc.id,
+       
         ...userDoc.data(),
     }
     //Hacemos la comparacion de la contraseña con el metodo compareSync()
@@ -156,68 +161,37 @@ usersRouter.get("/users/login", async (req,res) =>{
     //como segundo parametro la contraseña encriptada que esta en la base de datos
     const passwordMatch = bcryptjs.compareSync(password, user.password);
 
+    if (passwordMatch === false) {
+        res.status(400).send ("Usuario no se pudo loggear..!!")//si password es incorrecta status 400
+    };
+    const token = handlejwt.encrypt(user); //generamos token con los datos del usuario,
+                                           //el cual usará para autenticarse en la app sube.
+    
     //Si todo sale bien respondemos con un mensaje que todo salio bien
     res.status(200).send({
-        message:"Usuario logueado exitosamente..!!"
+        message:"Usuario logueado exitosamente..!!", 
+        token: token,
     }) 
 }) 
-//----------------------------RUTA PARA INICIO DE SESION----------------------------------------
-usersRouter.post("/login", async (req, res) => {
-    try {
-        // Extraer email y password del cuerpo del formulario
-        const { email, password } = req.body;
-        //Defino la colleccion que necesito
-        const collection = db.collection("Users");
-        // Buscar un documento en la colección donde el campo "email" coincida con el email proporcionado
-        const userFinded = await collection.where("email", "==", email).get();
-        // Verificar que NO!!! se encontró ningún usuario con el email proporcionado
-        if (userFinded.empty) {
-            return res.status(401).send("Invalid email or password");
-        }
-        // // Obtener el primer documento encontrado (dado que se espera un único usuario por email)
-        const userDoc = userFinded.docs[0];
-        
-        //// Extraer los datos del usuario del documento encontrado y el id del documento
-        const user = {
-            id: userDoc.id,
-            ...userDoc.data(),
-        };
-        /// Verificar si la contraseña proporcionada coincide con la contraseña almacenada
-        const passwordMatch = bcryptjs.compareSync(password, user.password);
-        //// Si las contraseñas no coinciden, responder con error 401
-        if (!passwordMatch) {
-            return res.status(401).send("Invalid email or password");
-        }
-        // // Generar un token JWT para el usuario
-        const token = handlejwt.encrypt(user);
 
-        // Responder con éxito, enviando un mensaje y el token
-        res.status(200).send({
-            message: "User logged in",
-            token: token,
-        });
-        // Manejar errores internos del servidor
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-//Esta ruta tiene como objetivo manejar la CREACION DE NUEVOS USUARIOS en tu aplicación---------------
-
-usersRouter.post("/", async (req, res) => {
+//----- CREACION DE USUARIOS NUEVOS(sigup)/INSCRIBIRSE POR PRIMERA VEZ en tu aplicación---------------
+usersRouter.post("/register", async (req, res) => {
     try{
         const body = req.body; 
     // Validacion de entrada       
     if(!body.email || !body.password){
         return res.status(400).send("Email y contraseña son requeridos");
     }
-    //Encriptar la contraseña
+    //Encriptar contraseña 1234...
     const passwordCrypt = bcryptjs.hashSync(body.password,10)
+    
     // Obtener la coleccion de usuarios
     const collection = db.collection("Users");
 
-    //Añadir usuario a la coleccion
+    //Añadir usuario a la coleccion con sus propiedades
     const user ={
-        email: body.email,
+        name: body.name,
+        email: body.email,        
         password: passwordCrypt,
     };
     
@@ -234,13 +208,15 @@ usersRouter.post("/", async (req, res) => {
 });
 //------------------------------------ACTUALIZA DATOS-----------------------------------------------------
 //Define una ruta para manejar solicitudes HTTP PUT. El :id en la ruta es un parámetro 
-//dinámico que indica cuál usuario se va a actualizar.
+//dinámico que indica cuál usuario se va a ACTUALIZAR.
 usersRouter.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const collection = db.collection("Users");
         const body = req.body;
-        await collection.doc(id).update(body);//actualiza (UPDATE) el documento en la colección "Users"
+        const passwordCrypt = bcryptjs.hashSync(body.password,10)
+        const updateBody = {...body,password: passwordCrypt} //Crea body nueveo con password encriptado
+        await collection.doc(id).update(updateBody);//actualiza (UPDATE) el documento en la colección "Users"
                                               //  que tiene el id proporcionado,
                                               // con los datos proporcionados en el body.
         res.send("Se actualizó un usuario");
@@ -248,13 +224,14 @@ usersRouter.put("/:id", async (req, res) => {
         res.status(500).send(error.message);
     }
 });
-//----------------------ELIMINA USUARIO MEDIANTE ID--------------------------------------------------
+//----------------------DELETE USUARIO MEDIANTE ID--------------------------------------------------
 //Define una ruta HTTP DELETE que acepta una solicitud para un usuario específico. 
 //el :id en la ruta es un parámetro que se captura para identificar
 // qué usuario debe ser eliminado.
 usersRouter.delete("/:id", async (req, res) => {
     try {
-        const { id } = req.params;//extrae el parámetro id de la solicitud. Este id se refiere al identificador
+        const { id } = req.params;//extrae el parámetro id de la solicitud. 
+                                  //Este id se refiere al identificador.
                                   // único del usuario que se desea eliminar.
 
         const collection = db.collection("Users");
@@ -262,8 +239,7 @@ usersRouter.delete("/:id", async (req, res) => {
         res.send("Se eliminó un usuario");
     } catch (error) {
         res.status(500).send(error.message);
-    }
-});
+    }});
 
 module.exports = usersRouter;
 

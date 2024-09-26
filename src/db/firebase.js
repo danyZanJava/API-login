@@ -20,7 +20,6 @@ admin.initializeApp({
     credential:admin.credential.cert(serviceAccount),
     databaseURL:process.env.DATABASEURL
 });
-
 const db =  getFirestore();
 
 module.exports = db;

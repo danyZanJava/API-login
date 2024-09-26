@@ -1,5 +1,4 @@
 
-
 const jsonwebtoken = require("jsonwebtoken");
 const dotenv = require ("dotenv");
 dotenv.config();
@@ -15,10 +14,10 @@ const handlejwt = {
         name:user.name,        
         },
                 //Llave del token guardada en una variable de entorno 
-        process.env.JSWTSECRET, 
+        process.env.JWTSECRET, 
 
                 //Tiempo de duracion del token. Puede durar tambien indefinidamente, sin un tiempo declarado
-        {expiresIn: "24hs"})
+        {expiresIn: "24h"})
 
         return token;
    },
@@ -26,8 +25,8 @@ const handlejwt = {
    verify: (token) => {
 
               //---------------Verifca si el token es TRUE O FALSE----------------------------------------------
-        const verifyToken = jsonwebtoken.verify(token, process.env.JSWTSECRET)
-   }
+        const verifyToken = jsonwebtoken.verify(token, process.env.JWTSECRET)
+        return verifyToken;
+   }   
 }
-
 module.exports = handlejwt;
