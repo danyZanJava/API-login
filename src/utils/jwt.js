@@ -4,9 +4,8 @@ const dotenv = require ("dotenv");
 dotenv.config();
 
 const handlejwt = {
-
-       //---------------funcion para  ENCRIPTAR un token ------------------------------
-   encrypt:(user) => {
+       
+   encrypt:(user) => {  ///---------------funcion para  ENCRIPTAR un token ------------------------------
 
         const token = jsonwebtoken.sign(
         {           //PAYLOAD -> (datos que vamos a guardar en el token)

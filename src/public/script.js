@@ -13,7 +13,7 @@ form.addEventListener('submit', (event) => {
             headers: {
                 'Content-type':  'application/json'
             },
-            body: JSON.stringify({//
+            body: JSON.stringify({
                 email,password
             })}) 
             

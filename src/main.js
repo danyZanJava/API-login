@@ -1,32 +1,29 @@
+//Dependencies
 const express = require("express");
-const app = express();
-const cors = require("cors");//el paquete CORS (Cross-Origin Resource Sharing), que es una middleware que permite
-                             // o restringe las solicitudes HTTP que provienen de
-                             // diferentes orígenes (dominios) a tu servidor.
+const cors = require("cors");
 
+//Routers
 const usersRouter = require("./routes/users.router.js");
+const viewsRouter = require("./routes/views.router.js");
 
+//app instance
+const app = express();
 
+//Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + "/public"))//Habilitamos a la api a que pueda acceder a 
-                                             //los archivos estaticos los cuales estan en la carpeta public
-
-
-app.use("/users", usersRouter);
-
-
-// Configurar CORS para aceptar solicitudes desde localhost
+app.use(express.static(__dirname + "/public"));
 app.use(cors({
-  origin: "http://localhost:3000", // Asegúrate de que tu frontend esté sirviendo en este puerto
+  origin: "http://localhost:3000", 
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
 
-app.get('/front', (req, res) => {
-  res.sendFile( __dirname + "/public/index.html" );//Crea una ruta de donde accedo al index.html
-});
+//endpoints
+app.use("/users", usersRouter);
+app.use("/views", viewsRouter);
 
+//app initialization
 app.listen(3000, () => {
   console.log("Server Up and running ..!!");
 });
