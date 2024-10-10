@@ -1,8 +1,9 @@
+
+
 const form = document.getElementById('loginform');
 
 form.addEventListener('submit', (event) => {
-    event.preventDefault();//Previene que la pagina se recargue y
-                            //permite que se ejecute la funcion FETCH.
+    event.preventDefault();
                            
 
     const email = document.getElementById('email').value;
