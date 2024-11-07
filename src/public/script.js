@@ -20,7 +20,7 @@ form.addEventListener('submit', (event) => {
             
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                window.localStorage.setItem("auth", data.token);
             })
             .catch(error => {
                 console.log(error); 

@@ -1,29 +1,30 @@
 
-//dependencies
+// Dependencies
+
 const admin = require("firebase-admin");
-const dotenv =  require("dotenv");
-const {getFirestore} = require("firebase-admin/firestore");
+const dotenv = require("dotenv");
+const {getFirestore} = require("firebase-adimin/firestore");
 
-//Allow environment variables
-dotenv.config();
+dotenv.config(); // CONFI VAR ENTORNO
 
-//Firebase app credentials
-const serviceAccount = {
+const serviceAccount = { // CONFIG FIRESTORE
 
     apiKey: process.env.APIKEY,
     authDomain: process.env.AUTHDOMAIN,
     projectId: process.env.PROJECTID,
-    privateKey: process.env.PRIVATEKEY,   
-    clientEmail: process.env.CLIENTEMAIL,
-    databaseURL: process.env.DATABASEURL,
-};
-//Firebase app initialization
-admin.initializeApp({
-    credential:admin.credential.cert(serviceAccount),
-    databaseURL:process.env.DATABASEURL
-});
-//Firestore referencies
-const db =  getFirestore();
+    privateKey: process.env.PRIVATEKEY,
+    clientMail: process.env.CLIENTMAIL,
+    databaseUrl: process.env.DATABASEURL,
+}
+ // initialize app Firestore
 
-module.exports = db;
+ admin.initializeApp({
+    credential:admin.credential.cert(serviceAccount),
+    databaseURL:process.env.DATABASEURL,
+ })
+ const db = getFirestore();
+
+ module.exports = db;
+
+
 
