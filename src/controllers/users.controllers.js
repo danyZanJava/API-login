@@ -1,8 +1,4 @@
-//dependencies
-const bcryptjs = require("bcryptjs");
 
-//utils
-const handlejwt = require("../utils/jwt.js");
 
 //services
 const userServices = require("../services/users.services.js")
@@ -24,29 +20,11 @@ const usersControllers = {
         const email = req.body.email;
         const password = req.body.password;    
         
-        const collection = db.collection("Users");         
-        const userFinded = await collection.where("email", "==", email).get();
-    
-        if (userFinded.docs.length === 0) {res.status(400).send ("User could not log in. Email incorrect!!")};    
-        
-        const userDoc = userFinded.docs[0];
-        
-        const user = {           
-            ...userDoc.data(), 
-        }
-        
-        const passwordMatch = bcryptjs.compareSync(password, user.password);
-    
-        if (passwordMatch === false) {
-            res.status(400).send ("User could not log in. Password incorrect.!!")
-        };
-        
-        const token = handlejwt.encrypt(user);     
-        
+        const tokenGenerate = await userServices.loginOne(email,password)
         res.status(200).send({
             message:"User logged in successfully..!!", 
-            token: token,
-            exitoso:1 
+            token: tokenGenerate,
+            
         })     
     },
     registerUser: async (req, res) => {
@@ -58,7 +36,7 @@ const usersControllers = {
         res.status(201).send("User added.")
         }
         catch (error){
-            console.error("Error adding a user..!!")
+            console.error(error)
             res.status(500).send("Internal Server Error")
         }         
     },

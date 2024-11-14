@@ -1,4 +1,9 @@
 const db = require("../db/firebase.js")
+//dependencies
+const bcryptjs = require("bcryptjs");
+
+//utils
+const handlejwt = require("../utils/jwt.js");
 
 const userServices = {
 
@@ -20,13 +25,36 @@ const userServices = {
     },
     //get one doc from db
     getOne: async() => {},
+    loginOne: async(email,password) =>{
+
+
+        const collection = db.collection("Users");         
+        const userFinded = await collection.where("email", "==", email).get();
+    
+        if (userFinded.docs.length === 0) {throw new Error("User could not log in. Email incorrect!!")};    
+        
+        const userDoc = userFinded.docs[0];
+        
+        const user = {           
+            ...userDoc.data(), 
+        }        
+        const passwordMatch = bcryptjs.compareSync(password, user.password);
+    
+        if (passwordMatch === false) {throw new Error("User could not log in. Password incorrect.!!")
+        };
+        
+        
+        const token = handlejwt.encrypt(user);
+        return token;          
+
+    },
     //create one doc on db
     createOne: async(body) => {
 
         if(!body.email || !body.password){
-            return res.status(400).send("Email and password are required.");        }
+             throw new Error("Email and password are required.");        }
         
-        const passwordCrypt = bcryptjs.hashSync(body.password,10)        
+        const passwordCrypt = bcryptjs.hashSync(body.password,10)       
         
         const collection = db.collection("Users");    
         
@@ -34,8 +62,7 @@ const userServices = {
             name: body.name,
             email: body.email,        
             password: passwordCrypt,
-        };   
-
+        };  
         await collection.add(user);   
     },
     //update one doc on db
