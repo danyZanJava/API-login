@@ -1,25 +1,23 @@
 //dependencies
 const bcryptjs = require("bcryptjs");
-//db connection
-const db = require("../db/firebase.js");
 
 //utils
 const handlejwt = require("../utils/jwt.js");
+
+//services
+const userServices = require("../services/users.services.js")
+
 const usersControllers = {
 
     getUsers: async (req, res) => {    
         try {
-            const collection = db.collection("Users");
-            const request = await collection.get();        
-            const users = request.docs.map((elements) => {
-                return {
-                    ...elements.data(),                    
-                    id: elements.id,  };
-            });
+
+            const users = await userServices.getAll();
             res.send(users);
+
         } catch (error) {
             res.status(500).send(error.message);
-            }
+        }
     },
     loginUser: async (req,res) =>{
     
@@ -41,7 +39,7 @@ const usersControllers = {
     
         if (passwordMatch === false) {
             res.status(400).send ("User could not log in. Password incorrect.!!")
-};
+        };
         
         const token = handlejwt.encrypt(user);     
         
@@ -53,21 +51,10 @@ const usersControllers = {
     },
     registerUser: async (req, res) => {
         try{
+
             const body = req.body; 
-             
-        if(!body.email || !body.password){
-            return res.status(400).send("Email and password are required.");        }
-        
-        const passwordCrypt = bcryptjs.hashSync(body.password,10)        
-        
-        const collection = db.collection("Users");    
-        
-        const user ={
-            name: body.name,
-            email: body.email,        
-            password: passwordCrypt,
-        };          
-        await collection.add(user);        
+            await userServices.createOne(body);
+
         res.status(201).send("User added.")
         }
         catch (error){
@@ -77,24 +64,18 @@ const usersControllers = {
     },
     updateUser: async (req, res) => {
         try {
+        
             const { id } = req.params;
-            const collection = db.collection("Users");
             const body = req.body;
-            const passwordCrypt = bcryptjs.hashSync(body.password,10)
-            const updateBody = {...body,password: passwordCrypt} 
-            await collection.doc(id).update(updateBody);
-                                                 
+            await userServices.updateOne(id, body)                
             res.send("A user was updated");
-        } catch (error) {
-            res.status(500).send(error.message);
-        }
+
+        } catch (error) { res.status(500).send(error.message); }
     },
     deleteUser: async (req, res) => {
         try {
             const { id } = req.params;
-    
-            const collection = db.collection("Users");
-            await collection.doc(id).delete();
+            await userServices.deleteOne(id);
             res.send("A user was deleted");
         } catch (error) {
             res.status(500).send(error.message);

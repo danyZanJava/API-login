@@ -13,4 +13,5 @@ const authMiddleware = async(req,res, next) =>{
         res.status(400).json({message:"Token is false"})
     }
 };
-module.exports = authMiddleware();
+
+module.exports = authMiddleware;

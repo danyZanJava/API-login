@@ -3,13 +3,13 @@ const express = require("express");
 const usersControllers = require("../controllers/users.controllers.js");
 
 //Middlewares
-const authMiddleware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/auth.middleware.js")
 
 //Router
 const usersRouter = express.Router();
 
 // get all users
-usersRouter.get("/", authMiddleware,usersControllers.getUsers);
+usersRouter.get("/", authMiddleware, usersControllers.getUsers);
 
 // login user
 usersRouter.post("/login", usersControllers.loginUser);

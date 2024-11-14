@@ -3,7 +3,7 @@
 
 const admin = require("firebase-admin");
 const dotenv = require("dotenv");
-const {getFirestore} = require("firebase-adimin/firestore");
+const {getFirestore} = require("firebase-admin/firestore");
 
 dotenv.config(); // CONFI VAR ENTORNO
 
@@ -13,10 +13,10 @@ const serviceAccount = { // CONFIG FIRESTORE
     authDomain: process.env.AUTHDOMAIN,
     projectId: process.env.PROJECTID,
     privateKey: process.env.PRIVATEKEY,
-    clientMail: process.env.CLIENTMAIL,
-    databaseUrl: process.env.DATABASEURL,
-}
- // initialize app Firestore
+    clientEmail: process.env.CLIENTEMAIL,
+    databaseURL: process.env.DATABASEURL,
+};
+
 
  admin.initializeApp({
     credential:admin.credential.cert(serviceAccount),
