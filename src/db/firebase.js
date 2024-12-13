@@ -1,14 +1,14 @@
 
 // Dependencies
-
 const admin = require("firebase-admin");
 const dotenv = require("dotenv");
 const {getFirestore} = require("firebase-admin/firestore");
 
-dotenv.config(); // CONFI VAR ENTORNO
+//var environment configuration 
+dotenv.config(); 
 
-const serviceAccount = { // CONFIG FIRESTORE
-
+ // Firestore configuration
+const serviceAccount = {
     apiKey: process.env.APIKEY,
     authDomain: process.env.AUTHDOMAIN,
     projectId: process.env.PROJECTID,
@@ -17,7 +17,7 @@ const serviceAccount = { // CONFIG FIRESTORE
     databaseURL: process.env.DATABASEURL,
 };
 
-
+//Admin initialation
  admin.initializeApp({
     credential:admin.credential.cert(serviceAccount),
     databaseURL:process.env.DATABASEURL,

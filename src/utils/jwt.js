@@ -10,7 +10,7 @@ const handlejwt = {
    encrypt:(user) => {  
 
         const token = jsonwebtoken.sign(
-        { id:user.id,name:user.name},                
+        { id:user.id,  name:user.name},                
         process.env.JWTSECRET,                
         {expiresIn: "24h"})
         return token;

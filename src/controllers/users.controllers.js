@@ -1,5 +1,4 @@
 
-
 //services
 const userServices = require("../services/users.services.js")
 
@@ -7,7 +6,6 @@ const usersControllers = {
 
     getUsers: async (req, res) => {    
         try {
-
             const users = await userServices.getAll();
             res.send(users);
 
@@ -23,13 +21,11 @@ const usersControllers = {
         const tokenGenerate = await userServices.loginOne(email,password)
         res.status(200).send({
             message:"User logged in successfully..!!", 
-            token: tokenGenerate,
-            
+            token: tokenGenerate,            
         })     
     },
     registerUser: async (req, res) => {
         try{
-
             const body = req.body; 
             await userServices.createOne(body);
 
@@ -41,8 +37,7 @@ const usersControllers = {
         }         
     },
     updateUser: async (req, res) => {
-        try {
-        
+        try {        
             const { id } = req.params;
             const body = req.body;
             await userServices.updateOne(id, body)                

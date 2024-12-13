@@ -9,15 +9,15 @@ const authMiddleware = require("../middlewares/auth.middleware.js")
 const usersRouter = express.Router();
 
 // get all users
-usersRouter.get("/", authMiddleware, usersControllers.getUsers);
+usersRouter.get("/",  usersControllers.getUsers);
 
 // login user
 usersRouter.post("/login", usersControllers.loginUser);
 
 //register user
-usersRouter.post("/register", usersControllers.registerUser); 
-//update one user
+usersRouter.post("/register", usersControllers.registerUser);
 
+//update one user
 usersRouter.put("/:id",authMiddleware,usersControllers.updateUser);
 
 //delete one user
