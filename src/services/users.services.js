@@ -51,8 +51,8 @@ const userServices = {
     //create one doc on db----------------------------------------------------------------------------------------------------
     createOne: async(body) => {
 
-        if(!body.email || !body.password){
-             throw new Error("Email and password are required."); }  
+        if(!body.email || !body.password || !body.username){
+             throw new Error("Unspecified fields"); }  
        
         
         const collection = db.collection("Users"); 
@@ -60,7 +60,7 @@ const userServices = {
         //Verifica si hay usuario con el mismo mail
         const existingUserSnapshot = await collection.where("email", "==", body.email).get();            
             
-        if(!existingUserSnapshot.empty){throw new Error("El usuario ya existe") };                 
+        if(!existingUserSnapshot.empty){throw new Error("El usuario ya existe") };              
                 
              
         
@@ -74,12 +74,17 @@ const userServices = {
         await collection.add(user);   
     },
     //update one doc on db------------------------------------------------------------------------------------------------
-    updateOne: async(id, body) => {
+    updateOne: async(id,{name,password,email}) => {
 
         const collection = db.collection("Users");
-        const passwordCrypt = bcryptjs.hashSync(body.password,10);
-        const updateBody = {...body,password: passwordCrypt};
-        await collection.doc(id).update(updateBody);
+        if(password){
+            const passwordCrypt = bcryptjs.hashSync(password,10);
+            const updateBody = {name,password:passwordCrypt,email};
+            await collection.doc(id).update(updateBody);
+        } else{
+            const updateBody = {name,email};
+            await collection.doc(id).update(updateBody); 
+        }     
 
     },
     //delete one doc from db-----------------------------------------------------------------------------------------------

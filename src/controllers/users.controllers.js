@@ -17,7 +17,7 @@ const usersControllers = {
     
         const email = req.body.email;
         const password = req.body.password;    
-        
+        //GENTERATE JWT here
         const tokenGenerate = await userServices.loginOne(email,password)
         res.status(200).send({
             message:"User logged in successfully..!!", 

@@ -8,8 +8,8 @@ const authMiddleware = require("../middlewares/auth.middleware.js")
 //Router
 const usersRouter = express.Router();
 
-// get all users
-usersRouter.get("/",  usersControllers.getUsers);
+// get all users 7// todo securutuzar endpoint
+usersRouter.get("/", authMiddleware, usersControllers.getUsers);
 
 // login user
 usersRouter.post("/login", usersControllers.loginUser);
