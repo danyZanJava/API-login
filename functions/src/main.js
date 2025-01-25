@@ -24,8 +24,9 @@ app.use("/users", usersRouter);
 app.use("/views", viewsRouter);
 
 //app initialization
-app.listen(3000, () => {
+/*app.listen(3000, () => {
   console.log("Server Up and running ..!!");
-});
+});*/
+module.exports = app;
 
 
