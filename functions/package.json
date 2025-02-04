@@ -4,8 +4,9 @@
   "description": "SUBEapp with authentications and authorizations",
   "main": "index.js",
   "scripts": {
-    "start": "node src/main.js",
-    "dev": "nodemon src/main.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "deploy": "firebase deploy --only functions"
   },
   "keywords": [],
   "author": "",

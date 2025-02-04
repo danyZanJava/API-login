@@ -51,7 +51,7 @@ const userServices = {
     //create one doc on db----------------------------------------------------------------------------------------------------
     createOne: async(body) => {
 
-        if(!body.email || !body.password || !body.username){
+        if(!body.email || !body.password || !body.name){
              throw new Error("Unspecified fields"); }  
        
         
