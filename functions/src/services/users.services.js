@@ -60,7 +60,7 @@ const userServices = {
         //Verifica si hay usuario con el mismo mail
         const existingUserSnapshot = await collection.where("email", "==", body.email).get();            
             
-        if(!existingUserSnapshot.empty){throw new Error("El usuario ya existe") };              
+        if(!existingUserSnapshot.empty){throw new Error("El usuario ya existe") };          
                 
              
         
